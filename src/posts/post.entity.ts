@@ -15,18 +15,16 @@ export class PostSocial extends BaseEntity {
   @Column()
   content: string;
 
-  @Column()
+  @Column({ default: null })
   img: string;
 
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
 }
