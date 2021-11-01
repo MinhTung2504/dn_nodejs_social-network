@@ -9,10 +9,16 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { DUPLICATE_ERROR } from 'src/utils/constants';
+import {
+  user_email_existed,
+  user_email_not_found,
+  user_error_login_credentials,
+} from 'src/utils/messages';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
 import { JwtPayload } from './jwt-payload.interface';
 import { User } from './models/user.entity';
+import stringInject from 'stringinject';
 
 @Injectable()
 export class AuthService {
@@ -23,13 +29,13 @@ export class AuthService {
   ) {}
 
   async findUserByEmail(email: string): Promise<User> {
-    const found = await this.usersRepository.findOne(email);
+    const post = await this.usersRepository.findOne({ email });
 
-    if (!found) {
-      throw new NotFoundException(`User with Email "${email}" not found`);
+    if (!post) {
+      throw new NotFoundException(stringInject(user_email_not_found, [email]));
     }
 
-    return found;
+    return post;
   }
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -49,7 +55,7 @@ export class AuthService {
     } catch (error) {
       // Duplicate Code
       if (error.code === DUPLICATE_ERROR) {
-        throw new ConflictException('Email already existed');
+        throw new ConflictException(user_email_existed);
       } else {
         throw new InternalServerErrorException();
       }
@@ -77,7 +83,11 @@ export class AuthService {
 
       return { accessToken };
     } else {
-      throw new UnauthorizedException('Please check your login credentials');
+      throw new UnauthorizedException(user_error_login_credentials);
     }
+  }
+
+  public async setImage(id: number, imgUrl: string) {
+    this.usersRepository.update(id, { avatar: imgUrl });
   }
 }
