@@ -15,10 +15,10 @@ import {
   user_error_login_credentials,
 } from 'src/utils/messages';
 import { Repository } from 'typeorm';
-import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
-import { JwtPayload } from './jwt-payload.interface';
-import { User } from './models/user.entity';
 import stringInject from 'stringinject';
+import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
+import { User } from '../models/user.entity';
+import { JwtPayload } from '../jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
