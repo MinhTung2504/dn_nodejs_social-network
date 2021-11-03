@@ -1,8 +1,11 @@
+import { Exclude } from 'class-transformer';
+import { User } from 'src/auth/models/user.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -27,4 +30,8 @@ export class PostSocial extends BaseEntity {
     type: 'timestamp',
   })
   updatedAt: Date;
+
+  @Exclude()
+  @ManyToOne(() => User, (user) => user.posts)
+  user: User;
 }

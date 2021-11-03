@@ -1,7 +1,9 @@
+import { PostSocial } from 'src/posts/post.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -43,4 +45,7 @@ export class User {
     type: 'timestamp',
   })
   updatedAt: Date;
+
+  @OneToMany(() => PostSocial, (post) => post.user, { eager: true })
+  posts: PostSocial[];
 }

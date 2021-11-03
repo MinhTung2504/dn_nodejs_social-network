@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,38 +20,52 @@ import { PostsService } from './posts.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ActionPostDto } from './dtos/action-post.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { User } from 'src/auth/models/user.entity';
 
 @Controller('posts')
+@UseGuards(AuthGuard())
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get()
-  getAllPosts(@Query() filterDto: GetPostsFilterDto): Promise<PostSocial[]> {
-    return this.postsService.getPosts(filterDto);
+  getAllPosts(
+    @Query() filterDto: GetPostsFilterDto,
+    @GetUser() user: User,
+  ): Promise<PostSocial[]> {
+    return this.postsService.getPosts(filterDto, user);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<PostSocial> {
-    return this.postsService.getPostById(id);
+  getTaskById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<PostSocial> {
+    return this.postsService.getPostById(id, user);
   }
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
-  createTask(@Body() createPostDto: ActionPostDto): Promise<PostSocial> {
-    return this.postsService.createPost(createPostDto);
+  createTask(
+    @Body() createPostDto: ActionPostDto,
+    @GetUser() user: User,
+  ): Promise<PostSocial> {
+    return this.postsService.createPost(createPostDto, user);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): Promise<string> {
-    return this.postsService.deletePost(id);
+  deleteTask(@Param('id') id: string, @GetUser() user: User): Promise<string> {
+    return this.postsService.deletePost(id, user);
   }
 
   @Put('/:id')
   updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: ActionPostDto,
+    @GetUser() user: User,
   ): Promise<PostSocial> {
-    return this.postsService.updatePost(id, updatePostDto);
+    return this.postsService.updatePost(id, updatePostDto, user);
   }
 
   @Post(':id/upload-img')
