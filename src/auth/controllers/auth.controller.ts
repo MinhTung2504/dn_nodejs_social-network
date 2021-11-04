@@ -7,10 +7,10 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthService } from './auth.service';
-import { AuthCredentialsDto } from './dtos/auth-credentials.dto';
+import { AuthCredentialsDto } from '../dtos/auth-credentials.dto';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { AuthService } from '../services/auth.service';
 
 @Controller('auth')
 export class AuthController {

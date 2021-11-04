@@ -23,12 +23,16 @@ import { ActionPostDto } from './dtos/action-post.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/models/user.entity';
+import { Role } from 'src/auth/models/role.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { hasRoles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('posts')
-@UseGuards(AuthGuard())
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
+  @hasRoles(Role.USER, Role.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Get()
   getAllPosts(
     @Query() filterDto: GetPostsFilterDto,
@@ -37,6 +41,8 @@ export class PostsController {
     return this.postsService.getPosts(filterDto, user);
   }
 
+  @hasRoles(Role.USER, Role.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Get('/:id')
   getTaskById(
     @Param('id') id: string,
@@ -45,6 +51,8 @@ export class PostsController {
     return this.postsService.getPostById(id, user);
   }
 
+  @hasRoles(Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post()
   createTask(
@@ -54,11 +62,15 @@ export class PostsController {
     return this.postsService.createPost(createPostDto, user);
   }
 
+  @hasRoles(Role.USER, Role.ADMIN)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Delete('/:id')
   deleteTask(@Param('id') id: string, @GetUser() user: User): Promise<string> {
     return this.postsService.deletePost(id, user);
   }
 
+  @hasRoles(Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Put('/:id')
   updatePost(
     @Param('id') id: string,
@@ -68,6 +80,8 @@ export class PostsController {
     return this.postsService.updatePost(id, updatePostDto, user);
   }
 
+  @hasRoles(Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
   @Post(':id/upload-img')
   @UseInterceptors(
     FileInterceptor('img', {

@@ -5,5 +5,6 @@ import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot(), PostsModule, AuthModule],
+  controllers: [],
 })
 export class AppModule {}
