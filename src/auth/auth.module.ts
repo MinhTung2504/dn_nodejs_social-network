@@ -9,6 +9,7 @@ import { JwtStrategy } from './guards/jwt.strategy';
 import { UserController } from './controllers/users.controller';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/users.service';
+import { FriendRequestEntity } from './models/friend-request.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { UserService } from './services/users.service';
         expiresIn: parseInt(process.env.EXPIRES_IN),
       },
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, FriendRequestEntity]),
   ],
   providers: [AuthService, JwtStrategy, UserService],
   controllers: [AuthController, UserController],
