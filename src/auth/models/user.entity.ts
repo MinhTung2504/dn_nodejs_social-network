@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { FriendRequestEntity } from './friend-request.entity';
 import { GenderType } from './gender.enum';
 import { Role } from './role.enum';
 
@@ -48,4 +49,18 @@ export class User {
 
   @OneToMany(() => PostSocial, (post) => post.user, { eager: true })
   posts: PostSocial[];
+
+  @OneToMany(
+    () => FriendRequestEntity,
+    (friendRequestsEntity) => friendRequestsEntity.creator,
+    { eager: true },
+  )
+  sentFriendRequests: FriendRequestEntity[];
+
+  @OneToMany(
+    () => FriendRequestEntity,
+    (friendRequestsEntity) => friendRequestsEntity.receiver,
+    { eager: true },
+  )
+  receivedFriendRequests: FriendRequestEntity[];
 }
