@@ -6,13 +6,20 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
 import { hasRoles } from '../decorators/roles.decorator';
+import { GetProfilesFilterDto } from '../dtos/get-profiles-filter.dto';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
 import { RolesGuard } from '../guards/roles.guard';
+import {
+  FriendFollow,
+  FriendFollowStatus,
+} from '../models/friend-follow.interface';
 import {
   FriendRequest,
   FriendRequestStatus,
@@ -30,6 +37,23 @@ export class UserController {
   @Get()
   getAllUsers(): Promise<User[]> {
     return this.userService.getUsers();
+  }
+
+  @hasRoles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Get('/profile')
+  findOthersProfiles(@Query() profileFilter: GetProfilesFilterDto) {
+    return this.userService.findOthersProfiles(profileFilter);
+  }
+
+  @hasRoles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Put('/profile')
+  async updateProfile(
+    @Request() req,
+    @Body() updateProfile: UpdateProfileDto,
+  ): Promise<User> {
+    return await this.userService.updateProfile(req.user, updateProfile);
   }
 
   @hasRoles(Role.ADMIN, Role.USER)
@@ -79,5 +103,25 @@ export class UserController {
     @Request() req,
   ): Observable<FriendRequestStatus[]> {
     return this.userService.getFriendRequestsFromRecipients(req.user);
+  }
+
+  @hasRoles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Post('friend-follow/follow/:followId')
+  async followFriend(
+    @Param('followId', ParseIntPipe) followId: number,
+    @Request() req,
+  ): Promise<Observable<FriendFollow | { error: string }>> {
+    return await this.userService.followFriend(followId, req.user);
+  }
+
+  @hasRoles(Role.ADMIN, Role.USER)
+  @UseGuards(AuthGuard(), RolesGuard)
+  @Put('friend-follow/follow/:followId')
+  respondFollowing(
+    @Param('followId', ParseIntPipe) followId: number,
+    @Body() statusResponse: FriendFollowStatus,
+  ): Observable<FriendFollowStatus> {
+    return this.userService.respondFollowing(statusResponse.status, followId);
   }
 }
