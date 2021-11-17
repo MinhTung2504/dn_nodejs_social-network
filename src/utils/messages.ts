@@ -5,6 +5,8 @@ const user_cannot_seflsend_friend_request =
   'It is not possible to add yourself!';
 const user_cannot_resend_friend_request =
   'A friend request has already been sent of received to your account!';
+const user_cannot_seflfollow = 'It is not possible to follow yourself!';
+const user_cannot_refollow_friend_request = 'You followed this user';
 const user_id_not_found = 'User with ID {0} Not Found';
 
 const post_not_found = 'Post with ID {0} not found';
@@ -19,4 +21,6 @@ export {
   user_cannot_seflsend_friend_request,
   user_cannot_resend_friend_request,
   user_id_not_found,
+  user_cannot_seflfollow,
+  user_cannot_refollow_friend_request,
 };

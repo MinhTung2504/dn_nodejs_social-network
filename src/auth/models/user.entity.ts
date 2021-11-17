@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { FriendFollowEntity } from './friend-follow.entity';
 import { FriendRequestEntity } from './friend-request.entity';
 import { GenderType } from './gender.enum';
 import { Role } from './role.enum';
@@ -63,4 +64,18 @@ export class User {
     { eager: true },
   )
   receivedFriendRequests: FriendRequestEntity[];
+
+  @OneToMany(
+    () => FriendFollowEntity,
+    (friendFollowEntity) => friendFollowEntity.follower,
+    { eager: true },
+  )
+  followFriends: FriendFollowEntity[];
+
+  @OneToMany(
+    () => FriendFollowEntity,
+    (friendFollowEntity) => friendFollowEntity.followee,
+    { eager: true },
+  )
+  receivedFollows: FriendFollowEntity[];
 }
